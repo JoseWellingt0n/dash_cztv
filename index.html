@@ -1,633 +1,141 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
-<title>CazéTV Futebol ao Vivo</title>
+<meta name="theme-color" content="#f6f8f7">
+<title>CazéTV — Central do Futebol</title>
 <style>
 :root{
-  --bg:#f5f7f8;
-  --surface:#ffffff;
-  --surface-2:#fafbfb;
-  --text:#101214;
-  --muted:#747b83;
-  --line:#e5e8eb;
-  --green:#12a957;
-  --green-2:#0d8e49;
-  --red:#ff2b2b;
-  --blue:#2563eb;
-  --purple:#7c3aed;
-  --orange:#f97316;
-  --teal:#0f9f8f;
-  --shadow:0 8px 28px rgba(16,24,40,.07);
-  --radius:20px;
+  color-scheme:light;
+  --bg:#f3f6f4;--surface:#fff;--surface-soft:#f7f9f8;--surface-strong:#edf2ef;
+  --text:#101814;--muted:#68736d;--line:#e1e8e4;--brand:#14b866;--brand-dark:#087a42;
+  --brand-soft:#e6f8ef;--red:#e73d4e;--red-soft:#fff0f2;--amber:#f2a51a;--blue:#3677ed;
+  --nav:#101814;--nav-muted:#8e9a94;--shadow:0 14px 40px rgba(18,42,29,.08);
+  --shadow-sm:0 5px 18px rgba(18,42,29,.06);--radius-xl:24px;--radius-lg:18px;--radius-md:14px;
 }
 [data-theme="dark"]{
-  --bg:#0b0f13;
-  --surface:#14191f;
-  --surface-2:#1b2128;
-  --text:#f4f7f9;
-  --muted:#99a2ab;
-  --line:#2a333d;
-  --green:#27d174;
-  --green-2:#1fba64;
-  --shadow:0 10px 30px rgba(0,0,0,.30);
+  color-scheme:dark;
+  --bg:#09100c;--surface:#111a15;--surface-soft:#17221c;--surface-strong:#202d26;
+  --text:#f3f8f5;--muted:#9eaaa3;--line:#26342c;--brand:#2bd67b;--brand-dark:#62e99e;
+  --brand-soft:#123525;--red:#ff6675;--red-soft:#3b1920;--amber:#ffc052;--blue:#72a4ff;
+  --nav:#050806;--nav-muted:#849088;--shadow:0 18px 45px rgba(0,0,0,.3);--shadow-sm:0 7px 20px rgba(0,0,0,.22);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
-}
-button,input,select{font:inherit;color:inherit}
-button{cursor:pointer}
-.app{
-  width:min(100%,920px);
-  margin:0 auto;
-  min-height:100vh;
-  background:var(--surface);
-}
-.topbar{
-  height:86px;
-  padding:0 14px;
-  display:grid;
-  grid-template-columns:44px minmax(0,1fr) auto;
-  align-items:center;
-  gap:10px;
-  position:sticky;
-  top:0;
-  z-index:30;
-  background:color-mix(in srgb,var(--surface) 96%,transparent);
-  backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line);
-}
-.icon-btn{
-  width:40px;height:40px;border:0;background:transparent;border-radius:12px;
-  display:grid;place-items:center;font-size:23px;
-}
-.icon-btn:active{background:var(--surface-2)}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
-.brand-logo{
-  width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
-  background:#101214;color:#fff;box-shadow:inset 0 0 0 4px #23c86a;
-  font-size:20px;
-}
-.brand-copy small,.brand-copy strong{display:block;line-height:1}
-.brand-copy small{font-size:11px;font-weight:800;letter-spacing:.03em}
-.brand-copy strong{font-size:23px;letter-spacing:-.04em}
-.top-actions{display:flex;gap:2px;align-items:center}
-.theme-toggle{
-  display:flex;align-items:center;gap:6px;border:1px solid var(--line);
-  background:var(--surface-2);padding:6px 9px;border-radius:999px;font-size:12px;font-weight:800;
-}
-.main-tabs{
-  display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
-  padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:86px;z-index:25;
-  background:var(--surface);
-}
-.main-tabs::-webkit-scrollbar{display:none}
-.main-tabs button{
-  border:0;background:transparent;color:var(--muted);padding:10px 14px;
-  border-radius:999px;font-size:12px;font-weight:900;white-space:nowrap;
-}
-.main-tabs button.active{color:#fff;background:var(--green)}
-.page{display:none;padding:18px 13px 92px}
-.page.active{display:block}
-.title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-h1{margin:0 0 6px;font-size:28px;letter-spacing:-.045em}
-.subtitle{font-size:12px;color:var(--muted)}
-.pill-btn{
-  border:1px solid var(--line);background:var(--surface);padding:10px 12px;border-radius:12px;
-  font-size:12px;font-weight:800;
-}
-.kpi-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:16px 0;
-}
-.kpi{
-  border:1px solid var(--line);background:linear-gradient(145deg,var(--surface),var(--surface-2));
-  border-radius:16px;padding:11px;box-shadow:var(--shadow);position:relative;overflow:hidden;
-}
-.kpi::after{
-  content:"";position:absolute;right:-24px;top:-24px;width:78px;height:78px;border-radius:50%;
-  background:var(--accent);opacity:.08;
-}
-.kpi-icon{
-  width:30px;height:30px;border-radius:10px;display:grid;place-items:center;
-  color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent);font-size:15px;font-weight:900;
-}
-.kpi span{display:block;color:var(--muted);font-size:8px;font-weight:800;margin-top:8px;letter-spacing:.04em}
-.kpi strong{display:block;font-size:22px;letter-spacing:-.04em;margin-top:2px}
-.kpi small{display:block;font-size:8px;color:var(--muted);margin-top:2px}
-.kpi.green{--accent:var(--green)}.kpi.red{--accent:var(--red)}.kpi.blue{--accent:var(--blue)}.kpi.purple{--accent:var(--purple)}.kpi.orange{--accent:var(--orange)}.kpi.teal{--accent:var(--teal)}
-.section-head{display:flex;justify-content:space-between;align-items:center;margin:15px 0 9px}
-.section-head h2{font-size:18px;margin:0}
-.section-head button{border:0;background:transparent;color:var(--green-2);font-size:11px;font-weight:900}
-.match-list{display:grid;gap:9px}
-.match-card{
-  border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:13px;box-shadow:var(--shadow)
-}
-.match-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.league{font-size:10px;color:var(--muted);font-weight:800}
-.live-badge{
-  display:inline-flex;align-items:center;gap:6px;background:#ffe9e9;color:#dc2626;
-  padding:5px 8px;border-radius:999px;font-size:9px;font-weight:900;
-}
-.live-badge i{width:6px;height:6px;background:#ef4444;border-radius:50%;animation:pulse 1.2s infinite}
-.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center}
-.team{text-align:center}
-.crest{
-  width:54px;height:54px;border-radius:16px;margin:auto;display:grid;place-items:center;
-  color:#fff;font-weight:900;font-size:14px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.22)
-}
-.team b{display:block;font-size:11px;margin-top:5px}
-.score{text-align:center}.score strong{font-size:28px}.score small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
-.match-actions{
-  display:flex;gap:6px;justify-content:flex-end;border-top:1px solid var(--line);margin-top:11px;padding-top:9px
-}
-.small-btn{
-  border:1px solid var(--line);background:var(--surface);padding:8px 10px;border-radius:10px;
-  font-size:10px;font-weight:800;
-}
-.small-btn.primary{background:var(--green);border-color:var(--green);color:#fff}
-.small-btn.favorite.active{background:#ffe8ec;border-color:#ffd1d8;color:#e11d48}
-.market-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}
-.market-tabs::-webkit-scrollbar{display:none}
-.market-tabs button{
-  border:1px solid var(--line);background:var(--surface);padding:8px 11px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap
-}
-.market-tabs button.active{background:var(--green);color:#fff;border-color:var(--green)}
-.player-row{
-  display:flex;gap:9px;overflow-x:auto;scrollbar-width:none;padding-bottom:3px
-}
-.player-row::-webkit-scrollbar{display:none}
-.player-card{
-  min-width:150px;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:10px;box-shadow:var(--shadow)
-}
-.player-photo{
-  height:120px;border-radius:13px;background:linear-gradient(145deg,#242b32,#101214);display:grid;place-items:center;
-  color:#fff;font-size:34px;font-weight:900;position:relative;overflow:hidden;
-}
-.player-rank{
-  position:absolute;left:7px;top:7px;background:#0f172a;color:#fff;padding:4px 6px;border-radius:999px;font-size:9px;font-weight:900
-}
-.player-card h3{font-size:12px;margin:9px 0 2px}.player-card p{font-size:9px;color:var(--muted);margin:0}
-.player-card strong{display:block;color:var(--green-2);font-size:17px;margin-top:6px}
-.player-card small{font-size:8px;color:var(--muted)}
-.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
-.quick{
-  border:1px solid var(--line);background:var(--surface);border-radius:15px;padding:11px;text-align:left;
-}
-.quick-icon{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);font-size:16px}
-.quick b{display:block;font-size:10px;margin-top:8px}.quick span{font-size:8px;color:var(--muted)}
-.toolbar{display:grid;grid-template-columns:1fr 120px;gap:8px;margin:12px 0}
-.toolbar input,.toolbar select{
-  width:100%;border:1px solid var(--line);background:var(--surface-2);padding:11px;border-radius:11px;outline:none
-}
-.players-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
-.player-kpi{
-  border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:11px
-}
-.player-kpi-head{display:flex;gap:9px;align-items:center}
-.avatar{width:46px;height:46px;border-radius:13px;background:#101214;color:#fff;display:grid;place-items:center;font-weight:900}
-.player-kpi h3{margin:0;font-size:12px}.player-kpi p{margin:2px 0 0;color:var(--muted);font-size:9px}
-.value-box{background:var(--surface-2);padding:8px;border-radius:10px;margin:9px 0}
-.value-box span{font-size:8px;color:var(--muted);display:block}.value-box strong{font-size:16px;color:var(--green-2)}
-.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.stats3 div{border:1px solid var(--line);border-radius:9px;padding:6px;text-align:center}.stats3 span{display:block;color:var(--muted);font-size:7px}.stats3 strong{font-size:12px}
-.history-card{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:12px;margin-bottom:9px}
-.history-card h3{font-size:12px;margin:0 0 7px}.history-row{display:grid;grid-template-columns:50px 1fr auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
-.history-row:first-of-type{border-top:0}.history-row small{font-size:9px;color:var(--muted)}
-.empty{border:1px dashed var(--line);background:var(--surface-2);border-radius:16px;padding:28px;text-align:center;color:var(--muted);font-size:11px}
-.settings-card{border:1px solid var(--line);background:var(--surface-2);border-radius:15px;padding:12px;margin-bottom:10px}
-.settings-card b{font-size:12px}.settings-card p{font-size:10px;line-height:1.5;color:var(--muted)}
-.bottom-nav{
-  position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(920px,100%);
-  height:72px;display:grid;grid-template-columns:repeat(5,1fr);z-index:28;
-  background:#0d1116;color:#9ca3af;border-radius:18px 18px 0 0;overflow:hidden;
-}
-.bottom-nav button{
-  border:0;background:transparent;color:inherit;display:grid;place-content:center;justify-items:center;gap:2px
-}
-.bottom-nav button.active{color:#2bd774}.bottom-nav span{font-size:20px}.bottom-nav small{font-size:8px}
-.drawer{
-  position:fixed;top:0;left:-290px;width:280px;height:100%;background:var(--surface);z-index:50;
-  padding:18px;border-right:1px solid var(--line);transition:.25s
-}
-.drawer.open{left:0}
-.drawer .menu{display:block;width:100%;border:0;background:var(--surface-2);padding:12px;border-radius:11px;margin:6px 0;text-align:left;font-weight:800}
-.overlay{position:fixed;inset:0;background:#0007;z-index:45;opacity:0;pointer-events:none;transition:.2s}.overlay.show{opacity:1;pointer-events:auto}
-.modal{position:fixed;inset:0;background:#0008;z-index:60;display:none;place-items:end center}.modal.show{display:grid}
-.modal-card{width:min(920px,100%);max-height:88vh;overflow:auto;background:var(--surface);border-radius:22px 22px 0 0;padding:15px}
-.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0;font-size:15px}
-.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
-.detail{background:var(--surface-2);border-radius:11px;padding:9px}.detail span{display:block;font-size:8px;color:var(--muted)}.detail strong{font-size:13px}
-.timeline{margin-top:13px}.event{display:grid;grid-template-columns:42px 1fr;gap:8px;padding:8px 0;border-top:1px solid var(--line)}.event b{font-size:10px}.event small{display:block;color:var(--muted);font-size:9px}
-.toast{position:fixed;right:12px;bottom:84px;background:#111;color:#fff;padding:10px 12px;border-radius:10px;opacity:0;transform:translateY(7px);transition:.2s;z-index:70;font-size:10px}.toast.show{opacity:1;transform:none}
-@keyframes pulse{50%{opacity:.25}}
-@media(max-width:600px){
-  .kpi-grid{grid-template-columns:repeat(2,1fr)}
-  .players-grid{grid-template-columns:1fr}
-  .quick-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:380px){
-  .brand-copy strong{font-size:20px}
-  .theme-toggle span{display:none}
-}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid color-mix(in srgb,var(--brand) 35%,transparent);outline-offset:2px}
+.icon{width:20px;height:20px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.app{width:min(100%,1180px);min-height:100vh;margin:auto;background:var(--bg)}
+.topbar{height:76px;padding:0 clamp(16px,4vw,32px);display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(20px);border-bottom:1px solid color-mix(in srgb,var(--line) 75%,transparent)}
+.icon-btn{width:42px;height:42px;border:1px solid transparent;border-radius:13px;background:transparent;color:var(--text);display:grid;place-items:center}.icon-btn:hover{background:var(--surface-strong);border-color:var(--line)}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}.brand-mark{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;background:var(--nav);color:#fff;box-shadow:inset 0 -3px 0 var(--brand)}
+.brand-mark svg{width:24px;height:24px}.brand-mark img{width:34px;height:34px;object-fit:contain;filter:brightness(0) invert(1)}.brand-copy{min-width:0}.brand-copy b{display:block;font-size:17px;line-height:1.05;letter-spacing:-.03em}.brand-copy small{display:block;margin-top:4px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.top-actions{display:flex;align-items:center;gap:3px}.theme-btn{height:40px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);display:flex;align-items:center;gap:8px;padding:0 11px;font-size:11px;font-weight:800}.theme-btn .icon{width:17px;height:17px}
+.tabs-wrap{position:sticky;top:76px;z-index:25;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+.main-tabs{display:flex;gap:7px;overflow:auto;scrollbar-width:none;padding:10px clamp(16px,4vw,32px)}.main-tabs::-webkit-scrollbar{display:none}
+.main-tabs button{min-height:38px;border:1px solid transparent;background:transparent;color:var(--muted);padding:0 15px;border-radius:12px;font-size:12px;font-weight:800;white-space:nowrap;transition:.2s}.main-tabs button:hover{background:var(--surface-strong);color:var(--text)}.main-tabs button.active{background:var(--text);color:var(--surface);box-shadow:var(--shadow-sm)}
+.page{display:none;padding:24px clamp(16px,4vw,32px) 110px}.page.active{display:block;animation:page-in .22s ease-out}@keyframes page-in{from{opacity:.25;transform:translateY(5px)}}
+.hero{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}.eyebrow{margin-bottom:7px;color:var(--brand-dark);font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.hero h1{font-size:clamp(27px,5vw,38px);line-height:1.05;letter-spacing:-.05em;margin:0}.subtitle{margin-top:7px;color:var(--muted);font-size:12px;line-height:1.5;text-transform:capitalize}
+.pill-btn{height:40px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:0 13px;border-radius:12px;font-size:11px;font-weight:800;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow-sm)}.pill-btn .icon{width:16px;height:16px}
+.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr);gap:20px;align-items:start}.side-stack{display:grid;gap:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}.kpi{min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-lg);padding:14px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;right:-28px;top:-35px;width:90px;height:90px;border-radius:50%;background:var(--accent);opacity:.09}.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.kpi-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}.kpi-icon .icon{width:17px;height:17px}.kpi-trend{font-size:9px;color:var(--muted);font-weight:800}.kpi>span{display:block;margin-top:11px;color:var(--muted);font-size:8px;letter-spacing:.08em;font-weight:900}.kpi strong{display:block;margin-top:2px;font-size:24px;letter-spacing:-.05em}.kpi small{display:block;margin-top:2px;color:var(--muted);font-size:9px}.green{--accent:var(--brand)}.red{--accent:var(--red)}.amber{--accent:var(--amber)}.blue{--accent:var(--blue)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm);padding:16px}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}.section-head h2{margin:0;font-size:17px;letter-spacing:-.025em}.section-head button{border:0;background:transparent;color:var(--brand-dark);font-size:10px;font-weight:900;padding:7px}.section-head-note{font-size:9px;color:var(--muted);font-weight:700}
+.match-list{display:grid;gap:10px}.match-card{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-lg);padding:14px;box-shadow:var(--shadow-sm);transition:.2s}.match-card:hover{border-color:color-mix(in srgb,var(--brand) 38%,var(--line));transform:translateY(-1px)}
+.match-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.league{min-width:0;color:var(--muted);font-size:9px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.league b{color:var(--text)}.status{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;background:var(--surface-strong);color:var(--muted);font-size:8px;font-weight:900;letter-spacing:.05em}.status.live{background:var(--red-soft);color:var(--red)}.status.live i{width:6px;height:6px;background:currentColor;border-radius:50%;animation:pulse 1.3s infinite}@keyframes pulse{50%{opacity:.25;transform:scale(.75)}}
+.scoreboard{display:grid;grid-template-columns:minmax(0,1fr) 82px minmax(0,1fr);gap:8px;align-items:center}.team{min-width:0;text-align:center}.crest{width:52px;height:52px;margin:auto;border-radius:15px;display:grid;place-items:center;background:var(--surface-soft);color:#fff;font-size:12px;font-weight:900;border:1px solid var(--line);box-shadow:0 4px 12px rgba(0,0,0,.08);overflow:hidden}.crest img{display:block;width:100%;height:100%;object-fit:contain;padding:6px}.crest.fallback{border:0}.team b{display:block;margin-top:7px;font-size:11px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.score{text-align:center}.score strong{display:block;font-size:24px;line-height:1;letter-spacing:-.045em}.score small{display:block;margin-top:5px;color:var(--muted);font-size:8px;font-weight:800;text-transform:uppercase}.match-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:13px;padding-top:11px;border-top:1px solid var(--line)}.small-btn{min-height:34px;border:1px solid var(--line);background:var(--surface-soft);color:var(--text);border-radius:10px;padding:0 11px;font-size:9px;font-weight:850}.small-btn:hover{background:var(--surface-strong)}.small-btn.primary{background:var(--brand);border-color:var(--brand);color:#052e18}.small-btn.favorite{width:35px;padding:0;font-size:16px}.small-btn.favorite.active{background:var(--red-soft);border-color:color-mix(in srgb,var(--red) 30%,var(--line));color:var(--red)}
+.market-tabs{display:flex;gap:6px;overflow:auto;scrollbar-width:none;margin-bottom:12px}.market-tabs::-webkit-scrollbar{display:none}.market-tabs button{height:31px;border:1px solid var(--line);background:var(--surface-soft);color:var(--muted);border-radius:10px;padding:0 10px;white-space:nowrap;font-size:9px;font-weight:850}.market-tabs button.active{background:var(--brand-soft);border-color:color-mix(in srgb,var(--brand) 30%,var(--line));color:var(--brand-dark)}
+.player-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.player-card{min-width:0;border:1px solid var(--line);border-radius:15px;padding:9px;background:var(--surface-soft)}.player-photo{height:112px;border-radius:11px;background:linear-gradient(145deg,#26352d,#0e1712);color:#fff;display:grid;place-items:center;font-size:25px;font-weight:900;position:relative;overflow:hidden}.player-photo>img{width:100%;height:100%;object-fit:cover;object-position:center top}.player-photo:after{content:"";position:absolute;width:75px;height:75px;border-radius:50%;background:var(--brand);opacity:.14;right:-22px;bottom:-30px}.player-rank{position:absolute;top:6px;left:6px;padding:4px 6px;border-radius:7px;background:#0c1510;color:#65e99f;font-size:8px;z-index:1}.player-card h3{margin:8px 0 2px;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.player-card p{margin:0;color:var(--muted);font-size:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.player-card strong{display:block;margin-top:6px;color:var(--brand-dark);font-size:14px}.player-card small{color:var(--muted);font-size:7px}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.quick{min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:15px;padding:12px;text-align:left;color:var(--text);transition:.2s}.quick:hover{background:var(--surface-soft);border-color:color-mix(in srgb,var(--brand) 30%,var(--line))}.quick-icon,.comp-logo{width:35px;height:35px;border-radius:11px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand-dark);font-size:11px;font-weight:900}.comp-logo.team-logo{width:44px;height:44px;background:var(--surface-soft);border:1px solid var(--line);overflow:hidden}.comp-logo.team-logo img{width:100%;height:100%;object-fit:contain;padding:5px}.quick-icon .icon{width:17px;height:17px}.quick b{display:block;margin-top:9px;font-size:10px}.quick span{display:block;margin-top:3px;color:var(--muted);font-size:8px;line-height:1.35}
+.content-stack{display:grid;gap:12px}.content-stack .match-card{max-width:760px}.toolbar{display:grid;grid-template-columns:1fr 150px;gap:9px;margin-bottom:14px}.toolbar input,.toolbar select{width:100%;height:43px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);padding:0 12px;font-size:11px}.players-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.player-kpi{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-lg);padding:13px;box-shadow:var(--shadow-sm)}.player-kpi-head{display:flex;align-items:center;gap:10px;min-width:0}.avatar{width:44px;height:44px;flex:0 0 auto;border-radius:13px;display:grid;place-items:center;background:var(--nav);color:#fff;font-size:11px;font-weight:900}.player-kpi h3{margin:0;font-size:11px}.player-kpi p{margin:3px 0 0;color:var(--muted);font-size:8px}.value-box{margin:10px 0;padding:9px;border-radius:11px;background:var(--surface-soft)}.value-box span,.stats3 span{display:block;color:var(--muted);font-size:7px;font-weight:800}.value-box strong{color:var(--brand-dark);font-size:15px}.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.stats3 div{text-align:center;padding:7px 3px;border:1px solid var(--line);border-radius:9px}.stats3 strong{font-size:11px}
+.history-card,.settings-card{max-width:760px;border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-lg);padding:15px;box-shadow:var(--shadow-sm)}.history-card h3,.settings-card b{margin:0;font-size:11px}.history-row{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}.history-row small,.settings-card p{color:var(--muted);font-size:9px;line-height:1.55}.empty{padding:32px;border:1px dashed var(--line);border-radius:var(--radius-lg);background:var(--surface-soft);text-align:center;color:var(--muted);font-size:10px}
+.bottom-nav{position:fixed;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(calc(100% - 20px),600px);height:68px;z-index:35;display:grid;grid-template-columns:repeat(5,1fr);background:color-mix(in srgb,var(--nav) 96%,transparent);color:var(--nav-muted);border:1px solid rgba(255,255,255,.07);border-radius:21px;box-shadow:0 16px 36px rgba(0,0,0,.28);overflow:hidden;backdrop-filter:blur(18px)}.bottom-nav button{border:0;background:transparent;color:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative}.bottom-nav button:before{content:"";position:absolute;top:0;width:22px;height:3px;border-radius:0 0 4px 4px;background:transparent}.bottom-nav button.active{color:#39de88}.bottom-nav button.active:before{background:#39de88}.bottom-nav .icon{width:19px;height:19px}.bottom-nav small{font-size:8px;font-weight:800}
+.drawer{position:fixed;inset:0 auto 0 0;width:min(320px,86vw);padding:20px;background:var(--surface);z-index:60;border-right:1px solid var(--line);transform:translateX(-102%);transition:.24s ease;box-shadow:var(--shadow)}.drawer.open{transform:none}.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.drawer-title{font-size:18px;font-weight:900;letter-spacing:-.04em}.menu{width:100%;height:44px;border:0;border-radius:12px;background:transparent;color:var(--text);display:flex;align-items:center;gap:10px;padding:0 12px;text-align:left;font-size:11px;font-weight:800}.menu:hover{background:var(--surface-soft)}.menu .icon{width:17px;height:17px;color:var(--muted)}.overlay{position:fixed;inset:0;background:rgba(2,8,5,.6);z-index:55;opacity:0;pointer-events:none;transition:.2s;backdrop-filter:blur(3px)}.overlay.show{opacity:1;pointer-events:auto}
+.modal{position:fixed;inset:0;z-index:70;background:rgba(2,8,5,.7);display:none;place-items:end center;padding-top:30px;backdrop-filter:blur(4px)}.modal.show{display:grid}.modal-card{width:min(620px,100%);max-height:90vh;overflow:auto;background:var(--surface);border-radius:25px 25px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:var(--shadow)}.modal-head{display:flex;align-items:center;justify-content:space-between}.modal-head h3{margin:0;font-size:15px}.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:16px}.detail{padding:10px;border-radius:11px;background:var(--surface-soft)}.detail span{display:block;color:var(--muted);font-size:7px}.detail strong{font-size:12px}.timeline{margin-top:16px}.event{display:grid;grid-template-columns:42px 1fr;gap:8px;padding:9px 0;border-top:1px solid var(--line)}.event b{font-size:9px}.event small{color:var(--muted);font-size:9px}
+.toast{position:fixed;left:50%;bottom:92px;z-index:80;max-width:calc(100% - 30px);transform:translate(-50%,12px);padding:10px 14px;border-radius:11px;background:var(--text);color:var(--surface);font-size:10px;font-weight:750;opacity:0;pointer-events:none;transition:.2s;box-shadow:var(--shadow)}.toast.show{opacity:1;transform:translate(-50%,0)}
+.avatar{width:52px;height:52px;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover;object-position:center top}
+@media(max-width:820px){.dashboard-grid{grid-template-columns:1fr}.side-stack{grid-template-columns:1.25fr .75fr}.players-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.topbar{height:68px;padding:0 13px;gap:7px}.tabs-wrap{top:68px}.main-tabs{padding:8px 13px}.brand-mark{width:38px;height:38px;border-radius:12px}.brand-copy b{font-size:15px}.brand-copy small{display:none}.top-actions .icon-btn{display:none}.theme-btn{width:40px;padding:0;justify-content:center}.theme-btn b{display:none}.page{padding:20px 13px 104px}.hero{margin-bottom:16px}.hero h1{font-size:29px}.kpi-grid{grid-template-columns:repeat(2,1fr);margin-bottom:16px}.kpi{padding:12px}.kpi strong{font-size:22px}.panel{padding:13px;border-radius:20px}.side-stack{grid-template-columns:1fr}.player-row{display:flex;overflow:auto;scroll-snap-type:x mandatory;padding-bottom:2px}.player-card{min-width:140px;scroll-snap-align:start}.quick-grid{grid-template-columns:repeat(2,1fr)}.players-grid{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr 125px}.bottom-nav{bottom:max(7px,env(safe-area-inset-bottom));width:calc(100% - 14px)}.scoreboard{grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr)}.match-actions{justify-content:stretch}.match-actions .small-btn:not(.favorite){flex:1}.crest{width:45px;height:45px}.hero .pill-btn span{display:none}}
+@media(max-width:360px){.brand-copy{display:none}.kpi-grid{gap:7px}.toolbar{grid-template-columns:1fr}.main-tabs button{padding:0 12px}.match-card{padding:12px}.team b{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="topbar">
-    <button class="icon-btn" id="menuBtn">☰</button>
-    <div class="brand">
-      <div class="brand-logo">⚽</div>
-      <div class="brand-copy"><small>CazéTV</small><strong>Futebol ao Vivo</strong></div>
-    </div>
-    <div class="top-actions">
-      <button class="icon-btn" id="searchBtn">⌕</button>
-      <button class="icon-btn" id="notifBtn">♧</button>
-      <button class="theme-toggle" id="themeBtn"><span>☾</span><b>Escuro</b></button>
-    </div>
+    <button class="icon-btn" id="menuBtn" aria-label="Abrir menu"><svg class="icon"><use href="#i-menu"/></svg></button>
+    <div class="brand"><div class="brand-mark"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Caz%C3%A9TV_logo.svg" alt="Logo CazéTV" onerror="this.replaceWith(document.createTextNode('C'))"></div><div class="brand-copy"><b>CazéTV</b><small>Central do futebol</small></div></div>
+    <div class="top-actions"><button class="icon-btn" id="searchBtn" aria-label="Buscar jogadores"><svg class="icon"><use href="#i-search"/></svg></button><button class="icon-btn" id="notifBtn" aria-label="Ativar notificações"><svg class="icon"><use href="#i-bell"/></svg></button><button class="theme-btn" id="themeBtn" aria-label="Alternar tema"><svg class="icon"><use href="#i-moon"/></svg><b>Escuro</b></button></div>
   </header>
-
-  <nav class="main-tabs" id="mainTabs">
-    <button class="active" data-page="home">Hoje</button>
-    <button data-page="live">Ao vivo</button>
-    <button data-page="tomorrow">Amanhã</button>
-    <button data-page="week">Esta semana</button>
-    <button data-page="competitions">Competições</button>
-  </nav>
-
+  <div class="tabs-wrap"><nav class="main-tabs" id="mainTabs" aria-label="Agenda"><button class="active" data-page="home">Hoje</button><button data-page="live">Ao Vivo</button><button data-page="tomorrow">Amanhã</button><button data-page="week">Esta Semana</button><button data-page="competitions">Competições</button></nav></div>
   <main>
     <section class="page active" id="page-home">
-      <div class="title-row">
-        <div><h1>Jogos de Hoje</h1><div class="subtitle" id="dateLabel">—</div></div>
-        <button class="pill-btn" id="filtersBtn">☷ Filtros</button>
-      </div>
-
-      <div class="kpi-grid">
-        <div class="kpi green"><div class="kpi-icon">▣</div><span>JOGOS HOJE</span><strong id="kpiGames">0</strong><small>Agenda completa</small></div>
-        <div class="kpi red"><div class="kpi-icon">●</div><span>AO VIVO</span><strong id="kpiLive">0</strong><small>Atualizando</small></div>
-        <div class="kpi orange"><div class="kpi-icon">♕</div><span>COMPETIÇÕES</span><strong id="kpiComps">0</strong><small>Monitoradas</small></div>
-        <div class="kpi green"><div class="kpi-icon">▶</div><span>NA CAZÉTV</span><strong id="kpiCaze">0</strong><small>Transmissões</small></div>
-      </div>
-
-      <div class="section-head"><h2>Partidas</h2><button id="seeAllGames">Ver todos</button></div>
-      <div class="match-list" id="homeMatches"></div>
-
-      <div class="section-head"><h2>KPIs Gerais</h2><button>Atualizado agora</button></div>
-      <div class="kpi-grid">
-        <div class="kpi green"><div class="kpi-icon">↗</div><span>JOGOS AO VIVO</span><strong id="kpiLive2">0</strong><small>na plataforma</small></div>
-        <div class="kpi blue"><div class="kpi-icon">▥</div><span>GOLS HOJE</span><strong id="kpiGoals">0</strong><small>Média <b id="kpiAvg">0,0</b>/jogo</small></div>
-        <div class="kpi purple"><div class="kpi-icon">♕</div><span>LIGAS ATIVAS</span><strong id="kpiLeagues">0</strong><small>cobertura</small></div>
-        <div class="kpi orange"><div class="kpi-icon">⌁</div><span>MÉDIA DE GOLS</span><strong id="kpiGoalsAvg">0,0</strong><small>por partida</small></div>
-      </div>
-
-      <div class="section-head"><h2>Mercado de Jogadores</h2><button data-go="players">Ver todos</button></div>
-      <div class="market-tabs" id="marketTabs">
-        <button class="active" data-market="hot">Em alta</button>
-        <button data-market="valuable">Mais valiosos</button>
-        <button data-market="scorers">Artilheiros</button>
-        <button data-market="assists">Assistências</button>
-      </div>
-      <div class="player-row" id="marketRow"></div>
-
-      <div class="quick-grid">
-        <button class="quick" data-go="history"><div class="quick-icon">◷</div><b>Histórico</b><span>Resultados e estatísticas</span></button>
-        <button class="quick" data-go="teams"><div class="quick-icon">⬡</div><b>Times</b><span>Clubes do mundo todo</span></button>
-        <button class="quick" data-go="competitions"><div class="quick-icon">♕</div><b>Competições</b><span>Todas as ligas</span></button>
-        <button class="quick" data-go="rankings"><div class="quick-icon">▥</div><b>Rankings</b><span>Clubes e jogadores</span></button>
+      <div class="hero"><div><div class="eyebrow">Sua central esportiva</div><h1>Jogos de hoje</h1><div class="subtitle" id="dateLabel">Agenda do dia</div></div><button class="pill-btn" id="filtersBtn"><svg class="icon"><use href="#i-filter"/></svg><span>Filtros</span></button></div>
+      <div class="kpi-grid" id="topKpis"></div>
+      <div class="dashboard-grid"><div class="panel"><div class="section-head"><h2>Partidas em destaque</h2><button id="seeAllGames">Ver agenda</button></div><div class="match-list" id="homeMatches"></div></div>
+        <aside class="side-stack"><div class="panel"><div class="section-head"><h2>Mercado de jogadores</h2><button data-go="players">Ver todos</button></div><div class="market-tabs" id="marketTabs"><button class="active" data-market="hot">Em alta</button><button data-market="valuable">Mais valiosos</button><button data-market="scorers">Artilheiros</button><button data-market="assists">Assistências</button></div><div class="player-row" id="marketRow"></div></div>
+        <div class="panel"><div class="section-head"><h2>Atalhos</h2><span class="section-head-note">Acesso rápido</span></div><div class="quick-grid" id="shortcutGrid"></div></div></aside>
       </div>
     </section>
-
-    <section class="page" id="page-live">
-      <div class="title-row"><div><h1>Ao Vivo</h1><div class="subtitle">Partidas acontecendo agora</div></div><button class="pill-btn" id="refreshLive">↻ Atualizar</button></div>
-      <div class="match-list" id="liveMatches" style="margin-top:14px"></div>
-    </section>
-
-    <section class="page" id="page-tomorrow">
-      <div class="title-row"><div><h1>Amanhã</h1><div class="subtitle" id="tomorrowSubtitle">Próximos jogos</div></div></div>
-      <div class="match-list" id="tomorrowMatches" style="margin-top:14px"></div>
-    </section>
-
-    <section class="page" id="page-week">
-      <div class="title-row"><div><h1>Esta Semana</h1><div class="subtitle" id="weekSubtitle">Agenda completa da semana</div></div></div>
-      <div class="match-list" id="weekMatches" style="margin-top:14px"></div>
-    </section>
-
-    <section class="page" id="page-competitions">
-      <div class="title-row"><div><h1>Competições</h1><div class="subtitle">Ligas e torneios monitorados</div></div></div>
-      <div class="quick-grid" id="competitionGrid" style="margin-top:14px"></div>
-    </section>
-
-    <section class="page" id="page-kpis">
-      <div class="title-row"><div><h1>KPIs</h1><div class="subtitle">Indicadores gerais da plataforma</div></div></div>
-      <div class="kpi-grid" style="margin-top:14px">
-        <div class="kpi green"><div class="kpi-icon">●</div><span>AO VIVO</span><strong id="kpiPageLive">0</strong><small>agora</small></div>
-        <div class="kpi blue"><div class="kpi-icon">⚽</div><span>GOLS</span><strong id="kpiPageGoals">0</strong><small>registrados</small></div>
-        <div class="kpi purple"><div class="kpi-icon">♕</div><span>COMPETIÇÕES</span><strong id="kpiPageComps">0</strong><small>monitoradas</small></div>
-        <div class="kpi teal"><div class="kpi-icon">◎</div><span>JOGADORES</span><strong id="kpiPagePlayers">0</strong><small>na base</small></div>
-      </div>
-    </section>
-
-    <section class="page" id="page-players">
-      <div class="title-row"><div><h1>Jogadores</h1><div class="subtitle">Ativos, livres e aposentados</div></div></div>
-      <div class="toolbar">
-        <input id="playerSearch" placeholder="Buscar jogador">
-        <select id="playerStatus">
-          <option value="all">Todos</option>
-          <option value="active">Ativos</option>
-          <option value="free">Sem clube</option>
-          <option value="retired">Aposentados</option>
-        </select>
-      </div>
-      <div class="players-grid" id="playersGrid"></div>
-    </section>
-
-    <section class="page" id="page-history">
-      <div class="title-row"><div><h1>Histórico</h1><div class="subtitle">Resultados recentes</div></div></div>
-      <div id="historyList" style="margin-top:14px"></div>
-    </section>
-
-    <section class="page" id="page-teams">
-      <div class="title-row"><div><h1>Times</h1><div class="subtitle">Clubes monitorados</div></div></div>
-      <div class="quick-grid" id="teamsGrid" style="margin-top:14px"></div>
-    </section>
-
-    <section class="page" id="page-rankings">
-      <div class="title-row"><div><h1>Rankings</h1><div class="subtitle">Jogadores em destaque</div></div></div>
-      <div class="players-grid" id="rankingGrid" style="margin-top:14px"></div>
-    </section>
-
-    <section class="page" id="page-more">
-      <div class="title-row"><div><h1>Mais</h1><div class="subtitle">Configurações e informações</div></div></div>
-      <div class="settings-card" style="margin-top:14px"><b>Modo atual</b><p>Protótipo funcional com dados demonstrativos. A estrutura está preparada para receber uma API real depois.</p></div>
-      <div class="settings-card"><b>Atualização automática</b><p>Os placares demonstrativos são atualizados localmente a cada 30 segundos.</p><button class="small-btn primary" id="forceUpdate">Atualizar agora</button></div>
-      <div class="settings-card"><b>Limpar favoritos</b><p>Remove os jogos salvos neste navegador.</p><button class="small-btn" id="clearFavorites">Limpar favoritos</button></div>
-    </section>
+    <section class="page" id="page-live"><div class="hero"><div><div class="eyebrow">Em tempo real</div><h1>Ao vivo</h1><div class="subtitle">Partidas acontecendo agora</div></div><button class="pill-btn" id="refreshLive"><svg class="icon"><use href="#i-refresh"/></svg><span>Atualizar</span></button></div><div class="content-stack match-list" id="liveMatches"></div></section>
+    <section class="page" id="page-tomorrow"><div class="hero"><div><div class="eyebrow">Próxima rodada</div><h1>Amanhã</h1><div class="subtitle" id="tomorrowSubtitle">Próximos jogos</div></div></div><div class="content-stack match-list" id="tomorrowMatches"></div></section>
+    <section class="page" id="page-week"><div class="hero"><div><div class="eyebrow">Planeje-se</div><h1>Esta semana</h1><div class="subtitle" id="weekSubtitle">Agenda completa da semana</div></div></div><div class="content-stack match-list" id="weekMatches"></div></section>
+    <section class="page" id="page-competitions"><div class="hero"><div><div class="eyebrow">Campeonatos</div><h1>Competições</h1><div class="subtitle">Ligas e torneios monitorados</div></div></div><div class="quick-grid" id="competitionGrid"></div></section>
+    <section class="page" id="page-kpis"><div class="hero"><div><div class="eyebrow">Visão geral</div><h1>KPIs gerais</h1><div class="subtitle">Indicadores demonstrativos da plataforma</div></div></div><div class="kpi-grid" id="kpiPageGrid"></div></section>
+    <section class="page" id="page-players"><div class="hero"><div><div class="eyebrow">Scout</div><h1>Jogadores</h1><div class="subtitle">Ativos, livres e aposentados</div></div></div><div class="toolbar"><input id="playerSearch" type="search" placeholder="Buscar jogador" aria-label="Buscar jogador"><select id="playerStatus" aria-label="Filtrar por status"><option value="all">Todos</option><option value="active">Ativos</option><option value="free">Sem clube</option><option value="retired">Aposentados</option></select></div><div class="players-grid" id="playersGrid"></div></section>
+    <section class="page" id="page-history"><div class="hero"><div><div class="eyebrow">Arquivo</div><h1>Histórico</h1><div class="subtitle">Resultados recentes</div></div></div><div class="content-stack" id="historyList"></div></section>
+    <section class="page" id="page-teams"><div class="hero"><div><div class="eyebrow">Clubes</div><h1>Times</h1><div class="subtitle">Equipes monitoradas</div></div></div><div class="quick-grid" id="teamsGrid"></div></section>
+    <section class="page" id="page-rankings"><div class="hero"><div><div class="eyebrow">Destaques</div><h1>Rankings</h1><div class="subtitle">Jogadores em evidência</div></div></div><div class="players-grid" id="rankingGrid"></div></section>
+    <section class="page" id="page-more"><div class="hero"><div><div class="eyebrow">Preferências</div><h1>Mais</h1><div class="subtitle">Configurações e informações</div></div></div><div class="content-stack"><div class="settings-card"><b>Protótipo demonstrativo</b><p>Esta versão usa dados locais para você testar toda a experiência antes da integração com APIs reais.</p></div><div class="settings-card"><b>Atualização dos placares</b><p>Os jogos ao vivo avançam localmente a cada 30 segundos.</p><button class="small-btn primary" id="forceUpdate">Atualizar agora</button></div><div class="settings-card"><b>Favoritos</b><p>Remova os jogos salvos neste navegador.</p><button class="small-btn" id="clearFavorites">Limpar favoritos</button></div></div></section>
   </main>
-
-  <nav class="bottom-nav">
-    <button class="active" data-bottom="home"><span>⌂</span><small>Início</small></button>
-    <button data-bottom="live"><span>◉</span><small>Ao vivo</small></button>
-    <button data-bottom="kpis"><span>◔</span><small>KPIs</small></button>
-    <button data-bottom="players"><span>♙</span><small>Jogadores</small></button>
-    <button data-bottom="more"><span>•••</span><small>Mais</small></button>
-  </nav>
+  <nav class="bottom-nav" aria-label="Navegação principal"><button class="active" data-bottom="home"><svg class="icon"><use href="#i-home"/></svg><small>Início</small></button><button data-bottom="live"><svg class="icon"><use href="#i-live"/></svg><small>Ao vivo</small></button><button data-bottom="kpis"><svg class="icon"><use href="#i-chart"/></svg><small>KPIs</small></button><button data-bottom="players"><svg class="icon"><use href="#i-users"/></svg><small>Jogadores</small></button><button data-bottom="more"><svg class="icon"><use href="#i-more"/></svg><small>Mais</small></button></nav>
 </div>
-
-<div class="drawer" id="drawer">
-  <button class="icon-btn" id="closeDrawer">×</button>
-  <h3>CazéTV Futebol ao Vivo</h3>
-  <button class="menu" data-go="home">Início</button>
-  <button class="menu" data-go="live">Ao vivo</button>
-  <button class="menu" data-go="kpis">KPIs</button>
-  <button class="menu" data-go="players">Jogadores</button>
-  <button class="menu" data-go="history">Histórico</button>
-  <button class="menu" data-go="competitions">Competições</button>
-</div>
-<div class="overlay" id="overlay"></div>
-
-<div class="modal" id="matchModal">
-  <div class="modal-card">
-    <div class="modal-head"><h3>Detalhes da partida</h3><button class="icon-btn" id="closeModal">×</button></div>
-    <div id="modalBody"></div>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
-
+<aside class="drawer" id="drawer" aria-hidden="true"><div class="drawer-head"><div class="drawer-title">CazéTV</div><button class="icon-btn" id="closeDrawer" aria-label="Fechar menu"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="drawerMenu"></div></aside><div class="overlay" id="overlay"></div>
+<div class="modal" id="matchModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-card"><div class="modal-head"><h3 id="modalTitle">Detalhes da partida</h3><button class="icon-btn" id="closeModal" aria-label="Fechar detalhes"><svg class="icon"><use href="#i-close"/></svg></button></div><div id="modalBody"></div></div></div><div class="toast" id="toast" role="status"></div>
+<svg width="0" height="0" style="position:absolute"><symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol><symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 3-2 3 2-1 4h-4zM3.5 9l5.5.5M6 18l3-5M18 18l-3-5M20.5 9 15 9.5"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol><symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5"/></symbol><symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol><symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M6.1 9A7 7 0 0 1 18 6l2 6M17.9 15A7 7 0 0 1 6 18l-2-6"/></symbol><symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v10h14V10M9 20v-6h6v6"/></symbol><symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.5 5.5a9 9 0 0 0 0 13M18.5 5.5a9 9 0 0 1 0 13"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7"/></symbol><symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5v1"/></symbol><symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></symbol><symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v4a4 4 0 0 1-8 0zM8 6H4v2a4 4 0 0 0 4 4M16 6h4v2a4 4 0 0 1-4 4M12 12v5M8 21h8M9 17h6"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol></svg>
 <script>
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
-let favorites=JSON.parse(localStorage.getItem('caze-organized-favorites')||'[]');
-let marketMode='hot';
-
-const matches=[
- {id:1,day:'today',league:'Brasileirão Série A',round:'Rodada 21',home:'Flamengo',away:'Palmeiras',hs:2,as:1,minute:67,status:'live',venue:'Maracanã',caze:true,hc:'#c8202f',ac:'#15803d',events:["23' Gol Flamengo","58' Gol Palmeiras","67' Gol Flamengo"]},
- {id:2,day:'today',league:'Premier League',round:'Rodada 1',home:'Manchester United',away:'Arsenal',hs:1,as:1,minute:46,status:'live',venue:'Old Trafford',caze:true,hc:'#c7252d',ac:'#d73934',events:["19' Gol Arsenal","39' Gol Manchester United"]},
- {id:3,day:'today',league:'Paulistão',round:'Semifinal',home:'Corinthians',away:'São Paulo',hs:0,as:0,minute:0,status:'scheduled',time:'15:30',venue:'Neo Química Arena',caze:true,hc:'#333',ac:'#d92332',events:[]},
- {id:4,day:'today',league:'Copa do Mundo 2026',round:'Fase de grupos',home:'Brasil',away:'França',hs:0,as:0,minute:0,status:'scheduled',time:'19:00',venue:'MetLife Stadium',caze:true,hc:'#2457b2',ac:'#273f8d',events:[]},
- {id:5,day:'today',league:'Brasileirão Série A',round:'Rodada 21',home:'Bahia',away:'Sport',hs:1,as:0,minute:90,status:'finished',venue:'Fonte Nova',caze:false,hc:'#2b62ba',ac:'#c92d3b',events:["38' Gol Bahia"]},
- {id:6,day:'tomorrow',league:'Premier League',round:'Rodada 1',home:'Liverpool',away:'Chelsea',hs:0,as:0,minute:0,status:'scheduled',time:'16:00',venue:'Anfield',caze:true,hc:'#d31d34',ac:'#2458b2',events:[]},
- {id:7,day:'tomorrow',league:'La Liga',round:'Rodada 2',home:'Real Madrid',away:'Barcelona',hs:0,as:0,minute:0,status:'scheduled',time:'18:30',venue:'Santiago Bernabéu',caze:false,hc:'#b9b9b9',ac:'#2c4fa3',events:[]},
- {id:8,day:'week',league:'Champions League',round:'Rodada 1',home:'PSG',away:'Bayern',hs:0,as:0,minute:0,status:'scheduled',time:'17:00',venue:'Parc des Princes',caze:false,hc:'#1c2e5a',ac:'#c92b35',events:[]}
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let favorites=JSON.parse(localStorage.getItem('caze-favorites')||'[]'), marketMode='hot', toastTimer;
+let matches=[
+ {id:1,day:'today',league:'Brasileirão Série A',round:'Rodada 21',home:'Flamengo',away:'Palmeiras',hs:2,as:1,minute:67,status:'live',venue:'Maracanã',caze:true,hc:'#c92036',ac:'#168248',events:["23' Gol do Flamengo","58' Gol do Palmeiras","67' Gol do Flamengo"]},
+ {id:2,day:'today',league:'Premier League',round:'Rodada 1',home:'Manchester United',away:'Arsenal',hs:1,as:1,minute:46,status:'live',venue:'Old Trafford',caze:true,hc:'#c52936',ac:'#d8403c',events:["19' Gol do Arsenal","39' Gol do Manchester United"]},
+ {id:3,day:'today',league:'Paulistão',round:'Semifinal',home:'Corinthians',away:'São Paulo',hs:0,as:0,minute:0,status:'scheduled',time:'15:30',venue:'Neo Química Arena',caze:true,hc:'#292d2b',ac:'#df303d',events:[]},
+ {id:4,day:'today',league:'Copa do Mundo 2026',round:'Fase de grupos',home:'Brasil',away:'França',hs:0,as:0,minute:0,status:'scheduled',time:'19:00',venue:'MetLife Stadium',caze:true,hc:'#1f60b7',ac:'#263e88',events:[]},
+ {id:5,day:'today',league:'Brasileirão Série A',round:'Rodada 21',home:'Bahia',away:'Sport',hs:1,as:0,minute:90,status:'finished',venue:'Fonte Nova',caze:false,hc:'#2d67bd',ac:'#ca3040',events:["38' Gol do Bahia"]},
+ {id:6,day:'tomorrow',league:'Premier League',round:'Rodada 1',home:'Liverpool',away:'Chelsea',hs:0,as:0,minute:0,status:'scheduled',time:'16:00',venue:'Anfield',caze:true,hc:'#d51f38',ac:'#265bb5',events:[]},
+ {id:7,day:'tomorrow',league:'La Liga',round:'Rodada 2',home:'Real Madrid',away:'Barcelona',hs:0,as:0,minute:0,status:'scheduled',time:'18:30',venue:'Santiago Bernabéu',caze:false,hc:'#8d9591',ac:'#294fa5',events:[]},
+ {id:8,day:'week',league:'Champions League',round:'Rodada 1',home:'PSG',away:'Bayern',hs:0,as:0,minute:0,status:'scheduled',time:'17:00',venue:'Parc des Princes',caze:false,hc:'#1d315e',ac:'#cb2c3a',events:[]}
 ];
-
 const players=[
- {name:'Erling Haaland',club:'Manchester City',status:'active',value:180,goals:323,assists:63,wins:214,trend:1},
- {name:'Vini Jr.',club:'Real Madrid',status:'active',value:150,goals:141,assists:105,wins:232,trend:2},
- {name:'Kylian Mbappé',club:'Real Madrid',status:'active',value:140,goals:376,assists:159,wins:298,trend:-1},
- {name:'J. Bellingham',club:'Real Madrid',status:'active',value:120,goals:83,assists:78,wins:164,trend:3},
- {name:'Phil Foden',club:'Manchester City',status:'active',value:110,goals:112,assists:91,wins:201,trend:0},
- {name:'Lionel Messi',club:'Inter Miami',status:'active',value:18,goals:875,assists:390,wins:652,trend:1},
- {name:'Cristiano Ronaldo',club:'Al-Nassr',status:'active',value:12,goals:940,assists:257,wins:703,trend:0},
- {name:'Neymar Jr',club:'Santos',status:'active',value:12,goals:442,assists:279,wins:389,trend:2},
- {name:'Paul Pogba',club:'Sem clube',status:'free',value:5,goals:76,assists:96,wins:218,trend:-1},
- {name:'Sergio Ramos',club:'Sem clube',status:'free',value:1.5,goals:143,assists:49,wins:521,trend:0},
- {name:'Ronaldinho',club:'Aposentado',status:'retired',value:null,goals:313,assists:188,wins:329,trend:0},
- {name:'Ronaldo Fenômeno',club:'Aposentado',status:'retired',value:null,goals:414,assists:105,wins:322,trend:0}
+ {name:'Erling Haaland',club:'Manchester City',status:'active',value:180,goals:323,assists:63,wins:214,trend:1},{name:'Vini Jr.',club:'Real Madrid',status:'active',value:150,goals:141,assists:105,wins:232,trend:2},{name:'Kylian Mbappé',club:'Real Madrid',status:'active',value:140,goals:376,assists:159,wins:298,trend:-1},{name:'J. Bellingham',club:'Real Madrid',status:'active',value:120,goals:83,assists:78,wins:164,trend:3},{name:'Phil Foden',club:'Manchester City',status:'active',value:110,goals:112,assists:91,wins:201,trend:0},{name:'Lionel Messi',club:'Inter Miami',status:'active',value:18,goals:875,assists:390,wins:652,trend:1},{name:'Cristiano Ronaldo',club:'Al-Nassr',status:'active',value:12,goals:940,assists:257,wins:703,trend:0},{name:'Neymar Jr.',club:'Santos',status:'active',value:12,goals:442,assists:279,wins:389,trend:2},{name:'Paul Pogba',club:'Sem clube',status:'free',value:5,goals:76,assists:96,wins:218,trend:-1},{name:'Sergio Ramos',club:'Sem clube',status:'free',value:1.5,goals:143,assists:49,wins:521,trend:0},{name:'Ronaldinho',club:'Aposentado',status:'retired',value:null,goals:313,assists:188,wins:329,trend:0},{name:'Ronaldo Fenômeno',club:'Aposentado',status:'retired',value:null,goals:414,assists:105,wins:322,trend:0}
 ];
-
-const competitions=[
- ['BR','Brasileirão','var(--green)'],['PL','Premier League','#5f2a82'],['SP','Paulistão','#ef4444'],
- ['WC','Copa do Mundo','#d79d24'],['EU','Eurocopa','#39a6db'],['CL','Champions','#2563eb']
-];
-
-function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1700)}
-function initials(name){return name.split(' ').map(x=>x[0]).slice(0,2).join('')}
-function playerInitials(name){return name.split(' ').map(x=>x[0]).slice(0,2).join('')}
-function setTheme(theme){
-  document.documentElement.dataset.theme=theme;
-  localStorage.setItem('caze-organized-theme',theme);
-  $('#themeBtn').innerHTML=theme==='dark'?'<span>☀</span><b>Claro</b>':'<span>☾</span><b>Escuro</b>';
-}
-function setPage(page){
-  $$('.page').forEach(p=>p.classList.remove('active'));
-  const target=$('#page-'+page);
-  if(!target){ toast('Tela não encontrada'); return; }
-  target.classList.add('active');
-  $$('.main-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
-  $$('.bottom-nav button').forEach(b=>b.classList.toggle('active',b.dataset.bottom===page));
-
-  if(page==='home') renderHome();
-  if(page==='live') renderSchedulePage('live');
-  if(page==='tomorrow') renderSchedulePage('tomorrow');
-  if(page==='week') renderSchedulePage('week');
-  if(page==='players') renderPlayers();
-  if(page==='history') renderHistory();
-
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function matchCard(m){
-  const fav=favorites.includes(m.id);
-  let status='';
-  if(m.status==='live') status=`<span class="live-badge"><i></i> AO VIVO ${m.minute}'</span>`;
-  else if(m.status==='finished') status=`<span class="league">FINAL</span>`;
-  else status=`<span class="league">${m.time}</span>`;
-  return `<article class="match-card">
-    <div class="match-meta"><span class="league">${m.league} • ${m.round}</span>${status}</div>
-    <div class="scoreboard">
-      <div class="team"><div class="crest" style="background:${m.hc}">${initials(m.home)}</div><b>${m.home}</b></div>
-      <div class="score"><strong>${m.status==='scheduled'?'×':m.hs+' × '+m.as}</strong><small>${m.status==='scheduled'?m.time:(m.status==='live'?m.minute+"'":'ENCERRADO')}</small></div>
-      <div class="team"><div class="crest" style="background:${m.ac}">${initials(m.away)}</div><b>${m.away}</b></div>
-    </div>
-    <div class="match-actions">
-      <button class="small-btn favorite ${fav?'active':''}" data-fav="${m.id}">${fav?'♥':'♡'}</button>
-      ${m.caze?'<button class="small-btn primary" data-watch="'+m.id+'">▶ Assistir</button>':''}
-      <button class="small-btn" data-detail="${m.id}">Detalhes</button>
-    </div>
-  </article>`;
-}
-function renderHome(){
-  const today=matches.filter(m=>m.day==='today');
-  $('#homeMatches').innerHTML=today.slice(0,4).map(matchCard).join('');
-  bindMatchButtons();
-  const live=matches.filter(m=>m.status==='live').length;
-  const goals=matches.reduce((s,m)=>s+m.hs+m.as,0);
-  const leagueCount=new Set(matches.map(m=>m.league)).size;
-  $('#kpiGames').textContent=today.length;
-  $('#kpiLive').textContent=live;
-  $('#kpiComps').textContent=leagueCount;
-  $('#kpiCaze').textContent=matches.filter(m=>m.caze).length;
-  $('#kpiLive2').textContent=live;
-  $('#kpiGoals').textContent=goals;
-  $('#kpiAvg').textContent=(goals/matches.length).toFixed(1).replace('.',',');
-  $('#kpiLeagues').textContent=leagueCount;
-  $('#kpiGoalsAvg').textContent=(goals/matches.length).toFixed(2).replace('.',',');
-  $('#kpiPageLive').textContent=live;
-  $('#kpiPageGoals').textContent=goals;
-  $('#kpiPageComps').textContent=leagueCount;
-  $('#kpiPagePlayers').textContent=players.length;
-}
-function renderSchedulePage(type){
-  let list=[];
-  let target='';
-
-  if(type==='live'){
-    list=matches.filter(m=>m.status==='live');
-    target='#liveMatches';
-  }else if(type==='tomorrow'){
-    list=matches.filter(m=>m.day==='tomorrow');
-    target='#tomorrowMatches';
-  }else if(type==='week'){
-    list=matches.filter(m=>m.day==='tomorrow'||m.day==='week');
-    target='#weekMatches';
-  }
-
-  const el=$(target);
-  if(!el) return;
-  el.innerHTML=list.length
-    ? list.map(matchCard).join('')
-    : '<div class="empty">Nenhuma partida encontrada para este período.</div>';
-  bindMatchButtons();
-}
-
-function renderLists(){
-  renderSchedulePage('live');
-  renderSchedulePage('tomorrow');
-  renderSchedulePage('week');
-}
-function bindMatchButtons(){
-  $$('[data-detail]').forEach(b=>b.onclick=()=>openMatch(+b.dataset.detail));
-  $$('[data-watch]').forEach(b=>b.onclick=()=>toast('Abrindo transmissão...'));
-  $$('[data-fav]').forEach(b=>b.onclick=()=>{
-    const id=+b.dataset.fav;
-    favorites=favorites.includes(id)?favorites.filter(x=>x!==id):favorites.concat(id);
-    localStorage.setItem('caze-organized-favorites',JSON.stringify(favorites));
-    renderHome();renderLists();toast(favorites.includes(id)?'Favoritado':'Removido');
-  });
-}
-function openMatch(id){
-  const m=matches.find(x=>x.id===id);
-  $('#modalBody').innerHTML=`<div style="padding-top:14px">
-    <div class="scoreboard">
-      <div class="team"><div class="crest" style="background:${m.hc}">${initials(m.home)}</div><b>${m.home}</b></div>
-      <div class="score"><strong>${m.status==='scheduled'?'×':m.hs+' × '+m.as}</strong><small>${m.status==='scheduled'?m.time:(m.status==='live'?m.minute+"'":'FINAL')}</small></div>
-      <div class="team"><div class="crest" style="background:${m.ac}">${initials(m.away)}</div><b>${m.away}</b></div>
-    </div>
-    <div class="detail-grid">
-      <div class="detail"><span>POSSE</span><strong>58% × 42%</strong></div>
-      <div class="detail"><span>FINALIZAÇÕES</span><strong>14 × 9</strong></div>
-      <div class="detail"><span>xG</span><strong>1,94 × 1,06</strong></div>
-      <div class="detail"><span>ESCANTEIOS</span><strong>7 × 3</strong></div>
-    </div>
-    <div class="timeline"><b>Eventos</b>${m.events.length?m.events.map(e=>`<div class="event"><b>${e.split(' ')[0]}</b><small>${e.substring(e.indexOf(' ')+1)}</small></div>`).join(''):'<div class="empty" style="margin-top:8px">A partida ainda não possui eventos.</div>'}</div>
-  </div>`;
-  $('#matchModal').classList.add('show');
-}
-function renderMarket(){
-  let list=[...players.filter(p=>p.status==='active')];
-  if(marketMode==='valuable') list.sort((a,b)=>(b.value||0)-(a.value||0));
-  if(marketMode==='scorers') list.sort((a,b)=>b.goals-a.goals);
-  if(marketMode==='assists') list.sort((a,b)=>b.assists-a.assists);
-  if(marketMode==='hot') list.sort((a,b)=>b.trend-a.trend);
-  $('#marketRow').innerHTML=list.slice(0,5).map((p,i)=>`<article class="player-card">
-    <div class="player-photo"><span class="player-rank">${p.trend>0?'↑'+p.trend:p.trend<0?'↓'+Math.abs(p.trend):'—'}</span>${playerInitials(p.name)}</div>
-    <h3>${p.name}</h3><p>${p.club}</p><strong>${p.value?'€'+p.value+'M':'—'}</strong><small>Valor de mercado*</small>
-  </article>`).join('');
-}
-function renderPlayers(){
-  const q=$('#playerSearch').value.trim().toLowerCase();
-  const s=$('#playerStatus').value;
-  const list=players.filter(p=>(s==='all'||p.status===s)&&p.name.toLowerCase().includes(q));
-  $('#playersGrid').innerHTML=list.map(p=>`<article class="player-kpi">
-    <div class="player-kpi-head"><div class="avatar">${playerInitials(p.name)}</div><div><h3>${p.name}</h3><p>${p.club} • ${p.status==='active'?'Ativo':p.status==='free'?'Sem clube':'Aposentado'}</p></div></div>
-    <div class="value-box"><span>VALOR DE MERCADO*</span><strong>${p.value?'€'+p.value+'M':'—'}</strong></div>
-    <div class="stats3"><div><span>GOLS</span><strong>${p.goals}</strong></div><div><span>ASSIST.</span><strong>${p.assists}</strong></div><div><span>VITÓRIAS</span><strong>${p.wins}</strong></div></div>
-  </article>`).join('');
-}
-function renderHistory(){
-  const finished=matches.filter(m=>m.status==='finished');
-  $('#historyList').innerHTML=finished.map(m=>`<div class="history-card"><h3>${m.league} • ${m.round}</h3><div class="history-row"><small>FINAL</small><div><b>${m.home} ${m.hs} × ${m.as} ${m.away}</b><br><small>${m.venue}</small></div><button class="small-btn" data-history="${m.id}">Ver</button></div></div>`).join('');
-  $$('[data-history]').forEach(b=>b.onclick=()=>openMatch(+b.dataset.history));
-}
-function renderStatic(){
-  $('#competitionGrid').innerHTML=competitions.map(c=>`<button class="quick"><div class="comp-logo" style="background:${c[2]}">${c[0]}</div><b>${c[1]}</b><span>Ver jogos e estatísticas</span></button>`).join('');
-  const teamNames=[...new Set(matches.flatMap(m=>[m.home,m.away]))];
-  $('#teamsGrid').innerHTML=teamNames.map((t,i)=>`<button class="quick"><div class="comp-logo" style="background:hsl(${(i*47)%360} 55% 45%)">${initials(t)}</div><b>${t}</b><span>Histórico e partidas</span></button>`).join('');
-  const ranked=[...players].sort((a,b)=>b.goals-a.goals).slice(0,8);
-  $('#rankingGrid').innerHTML=ranked.map((p,i)=>`<article class="player-kpi"><div class="player-kpi-head"><div class="avatar">${i+1}</div><div><h3>${p.name}</h3><p>${p.club}</p></div></div><div class="stats3" style="margin-top:9px"><div><span>GOLS</span><strong>${p.goals}</strong></div><div><span>ASSIST.</span><strong>${p.assists}</strong></div><div><span>VITÓRIAS</span><strong>${p.wins}</strong></div></div></article>`).join('');
-}
-function simulateUpdate(){
-  matches.filter(m=>m.status==='live').forEach(m=>{
-    if(m.minute<90)m.minute+=1;
-    if(Math.random()<.08){if(Math.random()<.5)m.hs+=1;else m.as+=1;m.events.push(`${m.minute}' Gol`);toast('⚽ Placar demonstrativo atualizado')}
-    if(m.minute>=90)m.status='finished';
-  });
-  renderHome();renderLists();renderHistory();
-}
-document.addEventListener('DOMContentLoaded',()=>{
-  const now=new Date();
-  $('#dateLabel').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-  setTheme(localStorage.getItem('caze-organized-theme')||'light');
-  renderHome();renderLists();renderMarket();renderPlayers();renderHistory();renderStatic();
-  $('#tomorrowSubtitle').textContent=matches.filter(m=>m.day==='tomorrow').length+' jogos programados';
-  $('#weekSubtitle').textContent=matches.filter(m=>m.day==='tomorrow'||m.day==='week').length+' jogos na agenda';
-
-  $$('#mainTabs button').forEach(b=>b.onclick=()=>setPage(b.dataset.page));
-  $$('.bottom-nav button').forEach(b=>b.onclick=()=>setPage(b.dataset.bottom));
-  $$('[data-go]').forEach(b=>b.onclick=()=>{setPage(b.dataset.go);closeDrawer()});
-  $$('#marketTabs button').forEach(b=>b.onclick=()=>{$$('#marketTabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');marketMode=b.dataset.market;renderMarket()});
-  $('#playerSearch').oninput=renderPlayers;$('#playerStatus').onchange=renderPlayers;
-  $('#themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
-  $('#notifBtn').onclick=()=>toast('Notificações ativadas');
-  $('#searchBtn').onclick=()=>{setPage('players');setTimeout(()=>$('#playerSearch').focus(),100)};
-  $('#filtersBtn').onclick=()=>toast('Filtros rápidos: ao vivo, hoje, amanhã e semana');
-  $('#seeAllGames').onclick=()=>setPage('week');
-  $('#refreshLive').onclick=()=>{simulateUpdate();toast('Jogos atualizados')};
-  $('#forceUpdate').onclick=()=>{simulateUpdate();toast('Atualização concluída')};
-  $('#clearFavorites').onclick=()=>{favorites=[];localStorage.removeItem('caze-organized-favorites');renderHome();renderLists();toast('Favoritos limpos')};
-
-  $('#menuBtn').onclick=()=>{$('#drawer').classList.add('open');$('#overlay').classList.add('show')};
-  $('#closeDrawer').onclick=closeDrawer;$('#overlay').onclick=closeDrawer;
-  function closeDrawer(){$('#drawer').classList.remove('open');$('#overlay').classList.remove('show')}
-
-  $('#closeModal').onclick=()=>$('#matchModal').classList.remove('show');
-  $('#matchModal').onclick=e=>{if(e.target.id==='matchModal')$('#matchModal').classList.remove('show')};
-
-  setInterval(simulateUpdate,30000);
-});
+const competitions=[[71,'Brasileirão','Brasil'],[73,'Copa do Brasil','Brasil'],[13,'Libertadores','América do Sul'],[39,'Premier League','Inglaterra'],[140,'La Liga','Espanha'],[2,'Champions League','Europa'],[1,'Seleção Brasileira','Brasil']];
+const playerPhotos={'Erling Haaland':1100,'Vini Jr.':762,'Kylian Mbappé':278,'J. Bellingham':129718,'Phil Foden':1460,'Lionel Messi':154,'Cristiano Ronaldo':874,'Neymar Jr.':276,'Paul Pogba':162,'Sergio Ramos':378,'Ronaldinho':1451,'Ronaldo Fenômeno':1322};
+const teamLogos={'Flamengo':9770,'Palmeiras':10283,'Manchester United':10260,'Arsenal':9825,'Corinthians':9808,'São Paulo':10277,'Brasil':8256,'França':6723,'Bahia':7877,'Sport':6305,'Liverpool':8650,'Chelsea':8455,'Real Madrid':8633,'Barcelona':8634,'PSG':9847,'Bayern':9823};
+const icons={history:'i-clock',teams:'i-users',competitions:'i-trophy',rankings:'i-chart'};
+function initials(n){return n.split(' ').filter(Boolean).map(x=>x[0]).slice(0,2).join('').toUpperCase()}
+function logoUrl(name){return `https://images.fotmob.com/image_resources/logo/teamlogo/${teamLogos[name]}.png`}
+function playerPhoto(name){return `https://media.api-sports.io/football/players/${playerPhotos[name]}.png`}
+function crest(name,color,url){return `<div class="crest"><img src="${url||logoUrl(name)}" alt="Escudo do ${name}" loading="lazy" onerror="this.parentElement.classList.add('fallback');this.parentElement.style.background='${color}';this.replaceWith(document.createTextNode('${initials(name)}'))"></div>`}
+function toast(msg){clearTimeout(toastTimer);const el=$('#toast');el.textContent=msg;el.classList.add('show');toastTimer=setTimeout(()=>el.classList.remove('show'),1900)}
+function setTheme(theme){document.documentElement.dataset.theme=theme;localStorage.setItem('caze-theme',theme);const dark=theme==='dark';$('#themeBtn').innerHTML=`<svg class="icon"><use href="#${dark?'i-sun':'i-moon'}"/></svg><b>${dark?'Claro':'Escuro'}</b>`;document.querySelector('meta[name="theme-color"]').content=dark?'#09100c':'#f3f6f4'}
+function setPage(page){const target=$('#page-'+page);if(!target)return toast('Tela não encontrada');$$('.page').forEach(x=>x.classList.toggle('active',x===target));$$('.main-tabs button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));$$('.bottom-nav button').forEach(x=>x.classList.toggle('active',x.dataset.bottom===page));if(page==='home')renderHome();if(['live','tomorrow','week'].includes(page))renderSchedulePage(page);if(page==='players')renderPlayers();if(page==='history')renderHistory();closeDrawer();window.scrollTo({top:0,behavior:'smooth'})}
+function kpiCard(label,value,note,color,icon,trend=''){return `<article class="kpi ${color}"><div class="kpi-top"><div class="kpi-icon"><svg class="icon"><use href="#${icon}"/></svg></div><span class="kpi-trend">${trend}</span></div><span>${label}</span><strong>${value}</strong><small>${note}</small></article>`}
+function matchCard(m){const fav=favorites.includes(m.id),scheduled=m.status==='scheduled',live=m.status==='live';const badge=live?`<span class="status live"><i></i> AO VIVO · ${m.minute}'</span>`:`<span class="status">${m.status==='finished'?'ENCERRADO':m.time}</span>`;return `<article class="match-card"><div class="match-meta"><span class="league"><b>${m.league}</b> · ${m.round}</span>${badge}</div><div class="scoreboard"><div class="team">${crest(m.home,m.hc,m.hl)}<b title="${m.home}">${m.home}</b></div><div class="score"><strong>${scheduled?'×':m.hs+' – '+m.as}</strong><small>${scheduled?m.time:live?m.minute+" minutos":'Final'}</small></div><div class="team">${crest(m.away,m.ac,m.al)}<b title="${m.away}">${m.away}</b></div></div><div class="match-actions"><button class="small-btn favorite ${fav?'active':''}" data-fav="${m.id}" aria-label="${fav?'Remover dos':'Adicionar aos'} favoritos">${fav?'♥':'♡'}</button>${m.caze?`<button class="small-btn primary" data-watch="${m.id}">▶ Assistir</button>`:''}<button class="small-btn" data-detail="${m.id}">Detalhes</button></div></article>`}
+function renderHome(){const today=matches.filter(m=>m.day==='today'),live=matches.filter(m=>m.status==='live').length,goals=matches.reduce((s,m)=>s+m.hs+m.as,0),leagues=new Set(matches.map(m=>m.league)).size;$('#topKpis').innerHTML=kpiCard('Jogos hoje',today.length,'Agenda completa','green','i-ball','Hoje')+kpiCard('Ao vivo',live,'Agora','red','i-live','●')+kpiCard('Competições',leagues,'Monitoradas','amber','i-trophy')+kpiCard('Na CazéTV',matches.filter(m=>m.caze).length,'Transmissões','blue','i-live');$('#kpiPageGrid').innerHTML=kpiCard('Ao vivo',live,'Neste momento','red','i-live')+kpiCard('Gols hoje',goals,'Média '+(goals/matches.length).toFixed(1).replace('.',','),'blue','i-ball')+kpiCard('Competições',leagues,'Cobertura ativa','amber','i-trophy')+kpiCard('Jogadores',players.length,'Na base demo','green','i-users');$('#homeMatches').innerHTML=today.slice(0,4).map(matchCard).join('');bindMatchButtons()}
+function renderSchedulePage(type){let list=type==='live'?matches.filter(m=>m.status==='live'):type==='tomorrow'?matches.filter(m=>m.day==='tomorrow'):matches.filter(m=>m.day==='tomorrow'||m.day==='week');const el=$('#'+type+'Matches');el.innerHTML=list.length?list.map(matchCard).join(''):'<div class="empty">Nenhuma partida encontrada para este período.</div>';bindMatchButtons()}
+function bindMatchButtons(){$$('[data-detail]').forEach(b=>b.onclick=()=>openMatch(+b.dataset.detail));$$('[data-watch]').forEach(b=>b.onclick=()=>toast('Transmissão demonstrativa selecionada'));$$('[data-fav]').forEach(b=>b.onclick=()=>{const id=+b.dataset.fav;favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[...favorites,id];localStorage.setItem('caze-favorites',JSON.stringify(favorites));renderHome();['live','tomorrow','week'].forEach(renderSchedulePage);toast(favorites.includes(id)?'Jogo salvo nos favoritos':'Jogo removido dos favoritos')})}
+function openMatch(id){const m=matches.find(x=>x.id===id),scheduled=m.status==='scheduled';$('#modalBody').innerHTML=`<div style="padding-top:18px"><div class="scoreboard"><div class="team">${crest(m.home,m.hc,m.hl)}<b>${m.home}</b></div><div class="score"><strong>${scheduled?'×':m.hs+' – '+m.as}</strong><small>${scheduled?m.time:m.status==='live'?m.minute+' minutos':'Final'}</small></div><div class="team">${crest(m.away,m.ac,m.al)}<b>${m.away}</b></div></div><div class="detail-grid"><div class="detail"><span>LOCAL</span><strong>${m.venue||'A confirmar'}</strong></div><div class="detail"><span>TRANSMISSÃO</span><strong>${m.caze?'CazéTV':'A confirmar'}</strong></div><div class="detail"><span>POSSE</span><strong>${m.real?'Disponível durante o jogo':'58% – 42%'}</strong></div><div class="detail"><span>FINALIZAÇÕES</span><strong>${m.real?'Disponível durante o jogo':'14 – 9'}</strong></div></div><div class="timeline"><b>Eventos da partida</b>${m.events.length?m.events.map(e=>`<div class="event"><b>${e.split(' ')[0]}</b><small>${e.substring(e.indexOf(' ')+1)}</small></div>`).join(''):'<div class="empty" style="margin-top:10px">A partida ainda não possui eventos.</div>'}</div></div>`;$('#matchModal').classList.add('show')}
+function renderMarket(){let list=players.filter(p=>p.status==='active');if(marketMode==='valuable')list.sort((a,b)=>b.value-a.value);if(marketMode==='scorers')list.sort((a,b)=>b.goals-a.goals);if(marketMode==='assists')list.sort((a,b)=>b.assists-a.assists);if(marketMode==='hot')list.sort((a,b)=>b.trend-a.trend);$('#marketRow').innerHTML=list.slice(0,3).map(p=>`<article class="player-card"><div class="player-photo"><span class="player-rank">${p.trend>0?'↑ '+p.trend:p.trend<0?'↓ '+Math.abs(p.trend):'—'}</span><img src="${playerPhoto(p.name)}" alt="Foto de ${p.name}" loading="lazy" onerror="this.replaceWith(document.createTextNode('${initials(p.name)}'))"></div><h3>${p.name}</h3><p>${p.club}</p><strong>€ ${p.value} mi</strong><small>Valor estimado demonstrativo</small></article>`).join('')}
+function renderPlayers(){const q=$('#playerSearch').value.toLowerCase().trim(),s=$('#playerStatus').value,list=players.filter(p=>(s==='all'||p.status===s)&&p.name.toLowerCase().includes(q));$('#playersGrid').innerHTML=list.length?list.map(p=>`<article class="player-kpi"><div class="player-kpi-head"><div class="avatar"><img src="${playerPhoto(p.name)}" alt="Foto de ${p.name}" loading="lazy" onerror="this.replaceWith(document.createTextNode('${initials(p.name)}'))"></div><div><h3>${p.name}</h3><p>${p.club} · ${p.status==='active'?'Ativo':p.status==='free'?'Sem clube':'Aposentado'}</p></div></div><div class="value-box"><span>VALOR ESTIMADO DEMONSTRATIVO</span><strong>${p.value?'€ '+p.value+' mi':'—'}</strong></div><div class="stats3"><div><span>GOLS</span><strong>${p.goals}</strong></div><div><span>ASSIST.</span><strong>${p.assists}</strong></div><div><span>VITÓRIAS</span><strong>${p.wins}</strong></div></div></article>`).join(''):'<div class="empty">Nenhum jogador encontrado.</div>'}
+function renderHistory(){const list=matches.filter(m=>m.status==='finished');$('#historyList').innerHTML=list.map(m=>`<article class="history-card"><h3>${m.league} · ${m.round}</h3><div class="history-row"><small>FINAL</small><div><b>${m.home} ${m.hs} – ${m.as} ${m.away}</b><br><small>${m.venue}</small></div><button class="small-btn" data-history="${m.id}">Ver</button></div></article>`).join('');$$('[data-history]').forEach(b=>b.onclick=()=>openMatch(+b.dataset.history))}
+function renderStatic(){const shortcuts=[['history','Histórico','Resultados recentes'],['teams','Times','Clubes monitorados'],['competitions','Competições','Ligas e torneios'],['rankings','Rankings','Destaques da temporada']];$('#shortcutGrid').innerHTML=shortcuts.map(x=>`<button class="quick" data-go="${x[0]}"><div class="quick-icon"><svg class="icon"><use href="#${icons[x[0]]}"/></svg></div><b>${x[1]}</b><span>${x[2]}</span></button>`).join('');$('#drawerMenu').innerHTML=[['home','Início','i-home'],['live','Ao vivo','i-live'],['kpis','KPIs','i-chart'],['players','Jogadores','i-users'],['history','Histórico','i-clock'],['competitions','Competições','i-trophy']].map(x=>`<button class="menu" data-go="${x[0]}"><svg class="icon"><use href="#${x[2]}"/></svg>${x[1]}</button>`).join('');$('#competitionGrid').innerHTML=competitions.map(c=>`<button class="quick"><div class="comp-logo team-logo"><img src="https://media.api-sports.io/football/leagues/${c[0]}.png" alt="Logo ${c[1]}" loading="lazy"></div><b>${c[1]}</b><span>${c[2]} · jogos e estatísticas</span></button>`).join('');const teams=[...new Set(matches.flatMap(m=>[m.home,m.away]))];$('#teamsGrid').innerHTML=teams.map(t=>`<button class="quick"><div class="comp-logo team-logo"><img src="${logoUrl(t)}" alt="Escudo do ${t}" loading="lazy"></div><b>${t}</b><span>Histórico e partidas</span></button>`).join('');$('#rankingGrid').innerHTML=[...players].sort((a,b)=>b.goals-a.goals).slice(0,8).map((p,i)=>`<article class="player-kpi"><div class="player-kpi-head"><div class="avatar"><img src="${playerPhoto(p.name)}" alt="Foto de ${p.name}" loading="lazy"></div><div><h3>${i+1}. ${p.name}</h3><p>${p.club}</p></div></div><div class="stats3" style="margin-top:10px"><div><span>GOLS</span><strong>${p.goals}</strong></div><div><span>ASSIST.</span><strong>${p.assists}</strong></div><div><span>VITÓRIAS</span><strong>${p.wins}</strong></div></div></article>`).join('');bindGoButtons()}
+async function loadRealFixtures(){if(location.protocol==='file:')return;try{const date=new Date().toLocaleDateString('en-CA',{timeZone:'America/Sao_Paulo'}),response=await fetch(`/api/football?type=fixtures&date=${date}`),data=await response.json();if(!data.ok||!data.fixtures?.length)return;matches=data.fixtures.map(item=>{const code=item.fixture.status.short,live=['1H','HT','2H','ET','BT','P','LIVE'].includes(code),finished=['FT','AET','PEN'].includes(code),start=new Date(item.fixture.date);return{id:item.fixture.id,day:'today',league:item.league.name,round:item.league.round||'Temporada 2026',home:item.teams.home.name,away:item.teams.away.name,hs:item.goals.home||0,as:item.goals.away||0,minute:item.fixture.status.elapsed||0,status:live?'live':finished?'finished':'scheduled',time:start.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'}),venue:item.fixture.venue?.name||'A confirmar',caze:false,hc:'#26352d',ac:'#26352d',hl:item.teams.home.logo,al:item.teams.away.logo,events:[],real:true}});renderHome();['live','tomorrow','week'].forEach(renderSchedulePage);renderStatic();toast('Jogos reais atualizados')}catch(error){console.info('Dados demonstrativos mantidos',error)}}
+function simulateUpdate(){if(matches.some(m=>m.real)){loadRealFixtures();return}matches.filter(m=>m.status==='live').forEach(m=>{if(m.minute<90)m.minute++;if(Math.random()<.06){Math.random()<.5?m.hs++:m.as++;m.events.push(`${m.minute}' Gol demonstrativo`)}});renderHome();['live','tomorrow','week'].forEach(renderSchedulePage)}
+function closeDrawer(){$('#drawer').classList.remove('open');$('#drawer').setAttribute('aria-hidden','true');$('#overlay').classList.remove('show')}
+function bindGoButtons(){$$('[data-go]').forEach(b=>b.onclick=()=>setPage(b.dataset.go))}
+document.addEventListener('DOMContentLoaded',()=>{const now=new Date();$('#dateLabel').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});setTheme(localStorage.getItem('caze-theme')||'light');renderHome();['live','tomorrow','week'].forEach(renderSchedulePage);renderMarket();renderPlayers();renderHistory();renderStatic();$('#tomorrowSubtitle').textContent=matches.filter(m=>m.day==='tomorrow').length+' jogos programados';$('#weekSubtitle').textContent=matches.filter(m=>m.day==='tomorrow'||m.day==='week').length+' jogos na agenda';$$('#mainTabs button').forEach(b=>b.onclick=()=>setPage(b.dataset.page));$$('.bottom-nav button').forEach(b=>b.onclick=()=>setPage(b.dataset.bottom));$$('#marketTabs button').forEach(b=>b.onclick=()=>{$$('#marketTabs button').forEach(x=>x.classList.toggle('active',x===b));marketMode=b.dataset.market;renderMarket()});$('#playerSearch').oninput=renderPlayers;$('#playerStatus').onchange=renderPlayers;$('#themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');$('#notifBtn').onclick=()=>toast('Notificações demonstrativas ativadas');$('#searchBtn').onclick=()=>{setPage('players');setTimeout(()=>$('#playerSearch').focus(),250)};$('#filtersBtn').onclick=()=>toast('Filtros estarão disponíveis na integração da agenda');$('#seeAllGames').onclick=()=>setPage('week');$('#refreshLive').onclick=()=>{simulateUpdate();toast('Placares demonstrativos atualizados')};$('#forceUpdate').onclick=()=>{simulateUpdate();toast('Atualização concluída')};$('#clearFavorites').onclick=()=>{favorites=[];localStorage.removeItem('caze-favorites');renderHome();['live','tomorrow','week'].forEach(renderSchedulePage);toast('Favoritos limpos')};$('#menuBtn').onclick=()=>{$('#drawer').classList.add('open');$('#drawer').setAttribute('aria-hidden','false');$('#overlay').classList.add('show')};$('#closeDrawer').onclick=closeDrawer;$('#overlay').onclick=closeDrawer;$('#closeModal').onclick=()=>$('#matchModal').classList.remove('show');$('#matchModal').onclick=e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('show')};document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();$('#matchModal').classList.remove('show')}});setInterval(simulateUpdate,30000)});
+document.addEventListener('DOMContentLoaded',loadRealFixtures);
 </script>
 </body>
 </html>
